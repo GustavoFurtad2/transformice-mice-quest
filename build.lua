@@ -5,7 +5,7 @@ function build(files)
 
     for k, v in next, files do
 
-        local file = io.open(v .. ".lua")
+        local file = io.open("src/" .. v .. ".lua")
         content = content .. file:read("*a") .. "\n\n"
         file:close()
 
@@ -14,7 +14,7 @@ function build(files)
     build:write(content)
 end
 
-local files = {}
+local files = {"init", "player"}
 
 build(files)
 
