@@ -1,7 +1,7 @@
 local Player = {}
 Player.__index = Player
 
-local function Player:new(name)
+function Player:new(name)
 
     local player = setmetatable({
 
@@ -28,19 +28,19 @@ end
 
 function Player:setHealth(health)
 
-    self.health = health <= self.maxHealth and health or self.maxHealth
+    self.health = math.min(health, self.maxHealth)
 end
 
 function Player:addHealth(health)
 
-    local sumHealth = self.health + health
-
-    self.health = sumHealth <= self.maxHealth and sumHealth or self.maxHealth
+    self.health = math.min(self.health + health, self.maxHealth)
 end
 
 function Player:subHealth(health)
 
-    local subHealth = self.health - health
+    self.health = self.health - health
 
-    self.health = subHealth > 0 and sumHealth or 0
+    if self.health <= 0 then
+        self:killPlayer()
+    end
 end
