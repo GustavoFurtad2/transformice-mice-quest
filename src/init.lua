@@ -7,3 +7,13 @@ tfm.exec.newGame [[<C><P G="0,0" Ca="" MEDATA=";;;;-0;0:::1-"/><Z><S/><D><DS X="
 ui.setMapName("#micequest")
 
 local data = {}
+
+local images = {
+
+    mouse = {
+
+        up = "18d5c83d73b.png",
+        down = "18d5c833aa1.png",
+        right = "18d5c83891b.png",
+    }
+}

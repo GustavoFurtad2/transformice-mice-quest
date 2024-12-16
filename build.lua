@@ -14,7 +14,7 @@ function build(files)
     build:write(content)
 end
 
-local files = {"init", "player"}
+local files = {"init", "utils", "player", "events"}
 
 build(files)
 

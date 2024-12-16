@@ -12,11 +12,25 @@ function Player:new(name)
 
         isDead = false,
 
+        character = {
+
+            direction = "down"
+        },
+
         backpack = {}
 
     }, Player)
 
     return player
+end
+
+function Player:init()
+    
+    tfm.exec.respawnPlayer(self.name)
+
+    tfm.exec.freezePlayer(self.name, true, false)
+
+    tfm.exec.addImage(images.mouse[self.character.direction], "%" .. self.name, -13.75, -16.25, name, 1.25, 1.25)
 end
 
 function Player:kill()
