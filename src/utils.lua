@@ -9,6 +9,8 @@ local function doLater(action, time)
         action = action,
         time = os.time() + time,
     })
+
+    return #timers
 end
 
 local function checkTimers()

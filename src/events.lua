@@ -7,6 +7,11 @@ function eventNewPlayer(name)
     ui.setMapName("#micequest")
 end
 
+function eventKeyboard(name, key, down, x, y)
+
+    data[name]:keyboard(key, down, x, y)
+end
+
 function eventLoop()
 
     checkTimers()

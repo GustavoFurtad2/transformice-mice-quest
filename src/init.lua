@@ -12,6 +12,9 @@ local images = {
 
     mouse = {
 
+        w = 22,
+        h = 26,
+
         up = "18d5c83d73b.png",
         down = "18d5c833aa1.png",
         right = "18d5c83891b.png",
