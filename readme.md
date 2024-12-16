@@ -1,1 +1,2 @@
-Minigame for Transformice
+Micequest is a MMORPG Minigame for Transformice
+
