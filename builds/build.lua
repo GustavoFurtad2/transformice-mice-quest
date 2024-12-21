@@ -78,7 +78,9 @@ function Player:new(name)
         character = {
 
             frame,
-            direction = "down"
+            speedX,
+            speedY,
+            direction = "down",
         },
 
         backpack = {}
@@ -97,6 +99,7 @@ function Player:init()
     self.character.frame = tfm.exec.addImage(images.mouse[self.character.direction], "%" .. self.name, -13.75, -16.25, name, 1.25, 1.25)
 
     for _, key in next, {"W", "A", "S", "D"} do
+        tfm.exec.bindKeyboard(self.name, string.byte(key), false, true)
         tfm.exec.bindKeyboard(self.name, string.byte(key), true, true)
     end
 end
@@ -147,9 +150,17 @@ function Player:changeDirection(direction, flipped)
     self.character.frame = tfm.exec.addImage(images.mouse[direction], "%" .. self.name, x, y, name, w, h)
 end
 
-function Player:move(direction)
+function Player:move(direction, down)
 
-    if self.direction ~= direction then
+    if not down then
+
+        tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)  
+        self.isMoving = false
+        
+        return
+    end
+
+    if self.character.direction ~= direction then
 
         if direction == "up" or direction == "right" or direction == "down" then
 
@@ -176,17 +187,10 @@ function Player:move(direction)
         speedY = self.speed
     end
 
+    self.character.speedX = speedX
+    self.character.speedY = speedY
+
     tfm.exec.movePlayer(self.name, 0, 0, false, speedX or 0, speedY or 0, false)
-
-    if self.isMoving then
-
-        table.remove(timers, self.stopMoveTimerIndex)
-    end
-
-    self.stopMoveTimerIndex = doLater(function()
-        tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)  
-        self.isMoving = false
-    end, 500)
 
     self.isMoving = true
 
@@ -196,16 +200,16 @@ function Player:keyboard(key, down, x, y)
 
     if key == string.byte("W") then
 
-        self:move("up")
+        self:move("up", down)
     elseif key == string.byte("A") then
 
-        self:move("left")
+        self:move("left", down)
     elseif key == string.byte("S") then
 
-        self:move("down")
+        self:move("down", down)
     elseif key == string.byte("D") then
 
-        self:move("right")
+        self:move("right", down)
     end
 end
 

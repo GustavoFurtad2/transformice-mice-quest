@@ -1,17 +1,22 @@
 function build(files)
 
-    local content = ""
-    local build = io.open("builds/build.lua", "w")
+    local sucess = pcall(function()
 
-    for k, v in next, files do
+        local content = ""
+        local build = io.open("builds/build.lua", "w")
 
-        local file = io.open("src/" .. v .. ".lua")
-        content = content .. file:read("*a") .. "\n\n"
-        file:close()
+        for k, v in next, files do
 
-    end
+            local file = io.open("src/" .. v .. ".lua")
+            content = content .. file:read("*a") .. "\n\n"
+            file:close()
 
-    build:write(content)
+        end
+
+        build:write(content)
+    end)
+
+    print(sucess and "Compiled with sucess!" or "Compilation failed!")
 end
 
 local files = {"init", "utils", "player", "events"}
