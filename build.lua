@@ -7,7 +7,7 @@ function build(files)
 
         for k, v in next, files do
 
-            local file = io.open("src/" .. v .. ".lua")
+            local file = io.open("src/" .. v)
             content = content .. file:read("*a") .. "\n\n"
             file:close()
 
@@ -19,7 +19,16 @@ function build(files)
     print(sucess and "Compiled with sucess!" or "Compilation failed!")
 end
 
-local files = {"init", "utils", "player", "events"}
+local files = {
+    "init.lua", 
+    "images.lua", 
+    "texts.lua", 
+    "utils.lua", 
+    "cutscenes.lua", 
+    "cutscenes/prologue.lua",
+    "player.lua", 
+    "events.lua"
+}
 
 build(files)
 

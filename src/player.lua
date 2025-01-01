@@ -15,7 +15,13 @@ function Player:new(name)
         isDead = false,
         isMoving = false,
 
+        canMove = true,
+
         stopMoveTimerIndex,
+
+        class = "",
+
+        lang = "br", --texts[tfm.get.room.playerList[name].community] or texts.en,
 
         character = {
 
@@ -25,7 +31,15 @@ function Player:new(name)
             direction = "down",
         },
 
-        backpack = {}
+        backpack = {},
+
+        progress = {
+
+            prologue = {
+
+                chooseClass = false,
+            },
+        }
 
     }, Player)
 
@@ -43,6 +57,11 @@ function Player:init()
     for _, key in next, {"W", "A", "S", "D"} do
         tfm.exec.bindKeyboard(self.name, string.byte(key), false, true)
         tfm.exec.bindKeyboard(self.name, string.byte(key), true, true)
+    end
+
+    if not self.progress.prologue.chooseClass then
+
+        Cutscenes.prologue:play(self.name)
     end
 end
 
@@ -93,6 +112,11 @@ function Player:changeDirection(direction, flipped)
 end
 
 function Player:move(direction, down)
+
+    if not self.canMove then
+        
+        return
+    end
 
     if not down then
 
