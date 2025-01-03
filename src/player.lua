@@ -23,6 +23,8 @@ function Player:new(name)
 
         lang = "br", --texts[tfm.get.room.playerList[name].community] or texts.en,
 
+        remainDialogs,
+
         character = {
 
             frame,
@@ -61,7 +63,7 @@ function Player:init()
 
     if not self.progress.prologue.chooseClass then
 
-        Cutscenes.prologue:play(self.name)
+        Cutscenes.prologue:init(self.name)
     end
 end
 

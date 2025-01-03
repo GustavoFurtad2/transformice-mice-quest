@@ -46,3 +46,11 @@ local function nineSlicedRect(source, target, targetPlayer, x, y, width, height)
         tfm.exec.addImage(source[9].img, target, x+width-source[9].w, y+height-source[9].h, targetPlayer, 1, 1),
     }
 end
+
+local function removeNineSlicedRect(source)
+
+    for _, v in next, source do
+
+        tfm.exec.removeImage(v)
+    end
+end

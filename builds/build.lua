@@ -18,7 +18,32 @@ local images = {
         up = "18d5c83d73b.png",
         down = "18d5c833aa1.png",
         right = "18d5c83891b.png",
+    },
+
+    window = {
+        {img = "17f85ff6afb.png", w = 28, h = 29},
+        {img = "17f86018555.png", w = 8, h = 29},
+        {img = "17f8601f67b.png", w = 28, h = 29},
+        {img = "17f860256e6.png", w = 28, h = 4},
+        {img = "17f8602b3f0.png", w = 8, h = 4},
+        {img = "17f86038225.png", w = 28, h = 4},
+        {img = "17f8603de5f.png", w = 28, h = 29},
+        {img = "17f86043b4a.png", w = 8, h = 29},
+        {img = "17f86049374.png", w = 28, h = 29},
     }
+}
+
+local texts = {
+
+    ["br"] = {
+
+        secret_room_message_1 = "Bem-vindo(a) a sala secreta.",
+        secret_room_message_2 = "Meu nome? Não importa.",
+        secret_room_message_3 = "Você foi o escolhido para acabar com a ameaça ancestral.",
+        secret_room_message_4 = "Não posso mais lutar contra ela... estou muito fraco, por isso te chamei",
+        secret_room_message_5 = "Na frente de você, cada estátua representa uma classe diferente",
+        secret_room_message_6 = "Cada arma foi forjada por um grande ferreiro do passado, escolha uma."
+    },
 }
 
 timers = {}
@@ -56,6 +81,75 @@ local function checkTimers()
     end
 end
 
+local function nineSlicedRect(source, target, targetPlayer, x, y, width, height)
+    return {
+        tfm.exec.addImage(source[1].img, target, x, y, targetPlayer, 1, 1),
+        tfm.exec.addImage(source[2].img, target, x+source[1].w, y, targetPlayer, (width-source[1].w-source[3].w)/source[2].w, 1),
+        tfm.exec.addImage(source[3].img, target, x+width-source[3].w, y, targetPlayer, 1, 1),
+        tfm.exec.addImage(source[4].img, target, x, y+source[1].h, targetPlayer, 1, (height-source[1].h-source[7].h)/source[4].h),
+        tfm.exec.addImage(source[5].img, target, x+source[1].w, y+source[1].h, targetPlayer, (width-source[1].w-source[3].w)/source[2].w, (height-source[1].h-source[7].h)/source[4].h),
+        tfm.exec.addImage(source[6].img, target, x+width-source[6].w, y+source[1].h, targetPlayer, 1, (height-source[1].h-source[7].h)/source[4].h),
+        tfm.exec.addImage(source[7].img, target, x, y+height-source[7].h, targetPlayer, 1, 1),
+        tfm.exec.addImage(source[8].img, target, x+source[7].w, y+height-source[8].h, targetPlayer, (width-source[1].w-source[3].w)/source[2].w, 1),
+        tfm.exec.addImage(source[9].img, target, x+width-source[9].w, y+height-source[9].h, targetPlayer, 1, 1),
+    }
+end
+
+local function removeNineSlicedRect(source)
+
+    for _, v in next, source do
+
+        tfm.exec.removeImage(v)
+    end
+end
+
+local Cutscene = {}
+Cutscene.__index = Cutscene
+
+function Cutscene.new(name)
+
+    local cutscene = {
+        name = name,
+        dialogs = {},
+        window
+    }
+
+    setmetatable(cutscene, Cutscene)
+
+    return cutscene
+end
+
+function Cutscene:addDialog(textKey)
+
+    table.insert(self.dialogs, textKey)
+end
+
+function Cutscene:nextDialog()
+
+    if self.remainDialogs < 1 then
+
+        removeNineSlicedRect(self.window)
+        return
+    end
+end
+
+function Cutscene:init(name)
+
+    self.window = nineSlicedRect(images.window, ":0", name, 200, 300, 400, 90)
+
+    ui.addTextArea(-1, "<p align='left'>" .. texts[data[name].lang][self.dialogs[#self.dialogs]] .. "</p>", name, 210, 310, 380, 70, 0xf, 0xf, 2, true)
+
+    ui.addTextArea(-2, "<font size='24'><a href='event:dialog" .. self.name .. "'>➝</a></font>", name, 560, 350, 380, 70, 0xf, 0xf, 2, true)
+
+    self.remainDialogs = #self.dialogs - 1
+end
+
+local Cutscenes = {}
+
+Cutscenes.prologue = Cutscene.new("prologue")
+
+Cutscenes.prologue:addDialog("secret_room_message_1")
+
 local Player = {}
 Player.__index = Player
 
@@ -73,7 +167,15 @@ function Player:new(name)
         isDead = false,
         isMoving = false,
 
+        canMove = true,
+
         stopMoveTimerIndex,
+
+        class = "",
+
+        lang = "br", --texts[tfm.get.room.playerList[name].community] or texts.en,
+
+        remainDialogs,
 
         character = {
 
@@ -83,7 +185,15 @@ function Player:new(name)
             direction = "down",
         },
 
-        backpack = {}
+        backpack = {},
+
+        progress = {
+
+            prologue = {
+
+                chooseClass = false,
+            },
+        }
 
     }, Player)
 
@@ -101,6 +211,11 @@ function Player:init()
     for _, key in next, {"W", "A", "S", "D"} do
         tfm.exec.bindKeyboard(self.name, string.byte(key), false, true)
         tfm.exec.bindKeyboard(self.name, string.byte(key), true, true)
+    end
+
+    if not self.progress.prologue.chooseClass then
+
+        Cutscenes.prologue:init(self.name)
     end
 end
 
@@ -151,6 +266,11 @@ function Player:changeDirection(direction, flipped)
 end
 
 function Player:move(direction, down)
+
+    if not self.canMove then
+        
+        return
+    end
 
     if not down then
 
@@ -225,6 +345,18 @@ end
 function eventKeyboard(name, key, down, x, y)
 
     data[name]:keyboard(key, down, x, y)
+end
+
+function eventTextAreaCallback(id, name, event)
+
+    local isDialog = event:sub(1, 6) == "dialog"
+
+    local cutsceneName = event:sub(7)
+
+    if isDialog then
+
+        Cutscenes[cutsceneName]:nextDialog()
+    end
 end
 
 function eventLoop()
