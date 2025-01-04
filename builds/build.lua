@@ -124,24 +124,32 @@ function Cutscene:addDialog(textKey)
     table.insert(self.dialogs, textKey)
 end
 
-function Cutscene:nextDialog()
+function Cutscene:nextDialog(name)
 
-    if self.remainDialogs < 1 then
+    data[name].currentDialog = data[name].currentDialog + 1
+
+    if data[name].currentDialog == #self.dialogs then
 
         removeNineSlicedRect(self.window)
+        ui.removeTextArea(-1, name)
+        ui.removeTextArea(-2, name)
         return
     end
+
+    ui.updateTextArea(-1, "<p align='left'>" .. texts[data[name].lang][self.dialogs[data[name].currentDialog]] .. "</p>", name)
 end
 
 function Cutscene:init(name)
 
     self.window = nineSlicedRect(images.window, ":0", name, 200, 300, 400, 90)
 
-    ui.addTextArea(-1, "<p align='left'>" .. texts[data[name].lang][self.dialogs[#self.dialogs]] .. "</p>", name, 210, 310, 380, 70, 0xf, 0xf, 2, true)
+    data[name].currentDialog = 1
 
-    ui.addTextArea(-2, "<font size='24'><a href='event:dialog" .. self.name .. "'>➝</a></font>", name, 560, 350, 380, 70, 0xf, 0xf, 2, true)
+    ui.addTextArea(-1, "<p align='left'>" .. texts[data[name].lang][self.dialogs[1]] .. "</p>", name, 210, 310, 380, 45, 0xf, 0xf, 2, true)
 
-    self.remainDialogs = #self.dialogs - 1
+    ui.addTextArea(-2, "<font size='24'><a href='event:dialog" .. self.name .. "'>➝</a></font>", name, 560, 350, 50, 50, 0xf, 0xf, 2, true)
+
+    data[name].currentDialog = data[name].currentDialog + 1
 end
 
 local Cutscenes = {}
@@ -149,6 +157,11 @@ local Cutscenes = {}
 Cutscenes.prologue = Cutscene.new("prologue")
 
 Cutscenes.prologue:addDialog("secret_room_message_1")
+Cutscenes.prologue:addDialog("secret_room_message_2")
+Cutscenes.prologue:addDialog("secret_room_message_3")
+Cutscenes.prologue:addDialog("secret_room_message_4")
+Cutscenes.prologue:addDialog("secret_room_message_5")
+Cutscenes.prologue:addDialog("secret_room_message_6")
 
 local Player = {}
 Player.__index = Player
@@ -175,7 +188,7 @@ function Player:new(name)
 
         lang = "br", --texts[tfm.get.room.playerList[name].community] or texts.en,
 
-        remainDialogs,
+        currentDialog = 1,
 
         character = {
 
@@ -355,7 +368,7 @@ function eventTextAreaCallback(id, name, event)
 
     if isDialog then
 
-        Cutscenes[cutsceneName]:nextDialog()
+        Cutscenes[cutsceneName]:nextDialog(name)
     end
 end
 

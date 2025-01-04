@@ -23,7 +23,7 @@ function Player:new(name)
 
         lang = "br", --texts[tfm.get.room.playerList[name].community] or texts.en,
 
-        remainDialogs,
+        currentDialog = 1,
 
         character = {
 
