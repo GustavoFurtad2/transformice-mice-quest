@@ -34,6 +34,7 @@ function Player:new(name)
         },
 
         backpack = {},
+        cutscene = {},
 
         progress = {
 

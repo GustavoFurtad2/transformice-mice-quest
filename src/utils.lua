@@ -49,8 +49,20 @@ end
 
 local function removeNineSlicedRect(source)
 
-    for _, v in next, source do
+    if type(source)[1] == "number" then
 
-        tfm.exec.removeImage(v)
+        for _, v in next, source do
+
+            tfm.exec.removeImage(v)
+        end
+
+        return
+    end
+
+    for _, window in next, source do
+
+        for _, v in next, window do
+            tfm.exec.removeImage(v)
+        end
     end
 end

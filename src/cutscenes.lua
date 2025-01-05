@@ -6,7 +6,6 @@ function Cutscene.new(name)
     local cutscene = {
         name = name,
         dialogs = {},
-        window
     }
 
     setmetatable(cutscene, Cutscene)
@@ -25,7 +24,7 @@ function Cutscene:nextDialog(name)
 
     if data[name].currentDialog == #self.dialogs then
 
-        removeNineSlicedRect(self.window)
+        removeNineSlicedRect(data[name].cutscene)
         ui.removeTextArea(-1, name)
         ui.removeTextArea(-2, name)
         return
@@ -36,7 +35,7 @@ end
 
 function Cutscene:init(name)
 
-    self.window = nineSlicedRect(images.window, ":0", name, 200, 300, 400, 90)
+    table.insert(data[name].cutscene, nineSlicedRect(images.window, ":0", name, 200, 300, 400, 90))
 
     data[name].currentDialog = 1
 
