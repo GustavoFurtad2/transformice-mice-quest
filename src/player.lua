@@ -15,7 +15,7 @@ function Player:new(name)
         isDead = false,
         isMoving = false,
 
-        canMove = true,
+        canMove = false,
 
         stopMoveTimerIndex,
 
@@ -35,6 +35,8 @@ function Player:new(name)
 
         backpack = {},
         cutscene = {},
+
+        isInCutscene = false,
 
         progress = {
 

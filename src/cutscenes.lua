@@ -37,6 +37,8 @@ function Cutscene:init(name)
 
     table.insert(data[name].cutscene, nineSlicedRect(images.window, ":0", name, 200, 300, 400, 90))
 
+    data[name].canMove = false
+    data[name].isInCutscene = true
     data[name].currentDialog = 1
 
     ui.addTextArea(-1, "<p align='left'>" .. texts[data[name].lang][self.dialogs[1]] .. "</p>", name, 210, 310, 380, 45, 0xf, 0xf, 2, true)
