@@ -27,6 +27,8 @@ function Cutscene:nextDialog(name)
         removeNineSlicedRect(data[name].cutscene)
         ui.removeTextArea(-1, name)
         ui.removeTextArea(-2, name)
+        data[name].canMove = true
+        data[name].isInCutscene = false
         return
     end
 
