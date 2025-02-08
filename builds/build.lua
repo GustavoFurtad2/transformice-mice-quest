@@ -300,14 +300,21 @@ function Player:move(direction, down)
 
     if not self.canMove then
         
+        self.isMoving = false
         return
     end
 
-    if not down then
+    if self.isMoving and down then
 
-        tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)  
-        self.isMoving = false
-        
+        tfm.exec.movePlayer(self.name, 0, 0, false, speedX or 0, speedY or 0, false)
+
+        doLater(function()
+            if not down and self.isMoving then
+                tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)
+                self.isMoving = false
+            end
+        end, 500)
+
         return
     end
 
@@ -343,8 +350,14 @@ function Player:move(direction, down)
 
     tfm.exec.movePlayer(self.name, 0, 0, false, speedX or 0, speedY or 0, false)
 
-    self.isMoving = true
+    doLater(function()
+        if not down and self.isMoving then
+            tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)
+            self.isMoving = false
+        end
+    end, 500)
 
+    self.isMoving = true
 end
 
 function Player:keyboard(key, down, x, y)
