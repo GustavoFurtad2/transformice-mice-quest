@@ -291,6 +291,8 @@ function Player:changeDirection(direction, flipped)
         w = -w
 
         x = x + math.abs(images.mouse.w * w)
+
+        self.character.direction = "left"
     end
 
     self.character.frame = tfm.exec.addImage(images.mouse[direction], "%" .. self.name, x, y, name, w, h)
