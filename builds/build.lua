@@ -115,6 +115,50 @@ local function removeNineSlicedRect(source)
     end
 end
 
+Entity = {}
+Entity.__index = Entity
+
+function Entity.new()
+    return setmetatable({
+
+        x = 0,
+        y = 0,
+
+        w = 0,
+        h = 0,
+
+        isDead = false,
+        isMoving = false,
+
+        health = 100,
+        defense = 0,
+
+        isColliding = false
+
+    }, self)
+end
+
+function Entity:kill()
+
+    self.isDead = true
+    self.isMoving = false
+    self.health = 0
+end
+
+function Entity:attack(damage, entity)
+
+    entity.health = entity.health - (entity.defense - damage)
+
+    if entity.health <= 0 then
+        entity:kill()
+    end
+end
+
+function Entity:isColliding(object)
+
+    return self.x + self.w >= object.x and self.x <= object.x + object.w and self.y + self.h >= object.y and self.y <= object.y + object.h
+end
+
 local Cutscene = {}
 Cutscene.__index = Cutscene
 
@@ -187,13 +231,11 @@ function Player:new(name)
 
         name = name,
 
+        entity = Entity.new(),
+
         speed = 35,
 
-        health = 100,
         maxHealth = 100,
-
-        isDead = false,
-        isMoving = false,
 
         canMove = false,
 
@@ -228,12 +270,15 @@ function Player:new(name)
 
     }, Player)
 
+    player.entity.health = player.maxHealth
+
     return player
 end
 
 function Player:init()
     
     tfm.exec.respawnPlayer(self.name)
+    self.entity.health = self.maxHealth
 
     tfm.exec.freezePlayer(self.name, true, false)
 
@@ -253,26 +298,25 @@ end
 function Player:kill()
 
     tfm.exec.killPlayer(self.name)
-
-    self.isDead = true
+    self.entity:kill()
 end
 
 function Player:setHealth(health)
 
-    self.health = math.min(health, self.maxHealth)
+    self.entity.health = math.min(health, self.maxHealth)
 end
 
 function Player:addHealth(health)
 
-    self.health = math.min(self.health + health, self.maxHealth)
+    self:setHealth(self.entity.health + health)
 end
 
 function Player:subHealth(health)
 
-    self.health = self.health - health
+    self:setHealth(self.entity.health - health)
 
-    if self.health <= 0 then
-        self:killPlayer()
+    if self.entity.health <= 0 then
+        self:kill()
     end
 end
 
@@ -301,22 +345,8 @@ end
 function Player:move(direction, down)
 
     if not self.canMove then
-        
-        self.isMoving = false
-        return
-    end
 
-    if self.isMoving and down then
-
-        tfm.exec.movePlayer(self.name, 0, 0, false, speedX or 0, speedY or 0, false)
-
-        doLater(function()
-            if not down and self.isMoving then
-                tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)
-                self.isMoving = false
-            end
-        end, 500)
-
+        self.entity.isMoving = false
         return
     end
 
@@ -331,7 +361,7 @@ function Player:move(direction, down)
         end
     end
 
-    local speedX, speedY
+    local speedX, speedY = 0, 0
 
     if direction == "left" then
 
@@ -350,16 +380,16 @@ function Player:move(direction, down)
     self.character.speedX = speedX
     self.character.speedY = speedY
 
-    tfm.exec.movePlayer(self.name, 0, 0, false, speedX or 0, speedY or 0, false)
+    tfm.exec.movePlayer(self.name, 0, 0, false, speedX, speedY, false)
 
     doLater(function()
-        if not down and self.isMoving then
+        if not down and self.entity.isMoving then
             tfm.exec.movePlayer(self.name, 0, 0, false, 0, 0, false)
-            self.isMoving = false
+            self.entity.isMoving = false
         end
     end, 500)
 
-    self.isMoving = true
+    self.entity.isMoving = true
 end
 
 function Player:keyboard(key, down, x, y)

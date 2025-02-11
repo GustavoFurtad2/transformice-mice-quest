@@ -24,6 +24,7 @@ local files = {
     "images.lua", 
     "texts.lua", 
     "utils.lua", 
+    "entity.lua",
     "cutscenes.lua", 
     "cutscenes/prologue.lua",
     "player.lua", 
