@@ -35,6 +35,9 @@ function Player:new(name)
         cutscene = {},
 
         isInCutscene = false,
+        isMenuOpen = false,
+
+        menu = {interface = {}},
 
         progress = {
 
@@ -64,6 +67,8 @@ function Player:init()
         tfm.exec.bindKeyboard(self.name, string.byte(key), false, true)
         tfm.exec.bindKeyboard(self.name, string.byte(key), true, true)
     end
+
+    tfm.exec.bindKeyboard(self.name, string.byte("M"), false, true)
 
     if not self.progress.prologue.chooseClass then
 
@@ -168,6 +173,24 @@ function Player:move(direction, down)
     self.entity.isMoving = true
 end
 
+function Player:openMenu()
+
+    self.isMenuOpen = true
+
+    table.insert(self.menu.interface, nineSlicedRect(images.window, ":0", self.name, 700, 100, 80, 250))
+
+    ui.addTextArea(-20, "<p align='center'>Menu</p>", self.name, 700, 110, 80, 50, 0xf, 0xf, 2, true)
+end
+
+function Player:closeMenu()
+
+    self.isMenuOpen = false
+
+    removeNineSlicedRect(self.menu.interface)
+
+    ui.removeTextArea(-20, self.name)
+end
+
 function Player:keyboard(key, down, x, y)
 
     if key == string.byte("W") then
@@ -182,5 +205,18 @@ function Player:keyboard(key, down, x, y)
     elseif key == string.byte("D") then
 
         self:move("right", down)
+
+    elseif key == string.byte("M") then
+
+        if not self.isInCutscene then
+
+            if not self.isMenuOpen then
+
+                self:openMenu()
+            else
+
+                self:closeMenu()
+            end
+        end
     end
 end
