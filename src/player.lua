@@ -68,6 +68,11 @@ function Player:init()
         tfm.exec.bindKeyboard(self.name, string.byte(key), true, true)
     end
 
+    for key = 37, 40 do
+        tfm.exec.bindKeyboard(self.name, key, false, true)
+        tfm.exec.bindKeyboard(self.name, key, true, true)
+    end
+
     tfm.exec.bindKeyboard(self.name, string.byte("M"), false, true)
 
     if not self.progress.prologue.chooseClass then
@@ -204,6 +209,19 @@ function Player:keyboard(key, down, x, y)
         self:move("down", down)
     elseif key == string.byte("D") then
 
+        self:move("right", down)
+
+    elseif key == 38 then
+
+        self:move("up", down)
+    elseif key == 37 then
+    
+        self:move("left", down)
+    elseif key == 40 then
+    
+        self:move("down", down)
+    elseif key == 39 then
+    
         self:move("right", down)
 
     elseif key == string.byte("M") then
