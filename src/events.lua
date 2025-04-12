@@ -14,13 +14,20 @@ end
 
 function eventTextAreaCallback(id, name, event)
 
-    local isDialog = event:sub(1, 6) == "dialog"
+    if event:sub(1, 6) == "dialog" then
 
-    local cutsceneName = event:sub(7)
-
-    if isDialog then
+        local cutsceneName = event:sub(7)
 
         Cutscenes[cutsceneName]:nextDialog(name)
+    elseif event:sub(1, 7) == "profile" then
+
+        local playerName = event:sub(8)
+
+        data[name]:openProfile(playerName)
+
+    elseif event == "closeProfile" then
+
+        data[name]:closeProfile()
     end
 end
 

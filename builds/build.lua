@@ -426,6 +426,29 @@ function Player:move(direction, down)
     self.entity.isMoving = true
 end
 
+function Player:openProfile(targetPlayer)
+
+    removeNineSlicedRect(self.menu.interface)
+
+    ui.removeTextArea(-20, self.name)
+    ui.removeTextArea(-21, self.name)
+
+    table.insert(self.menu.interface, nineSlicedRect(images.window, ":0", self.name, 300, 100, 250, 250))
+    table.insert(self.menu.interface, nineSlicedRect(images.window, ":0", self.name, 570, 100, 40, 40))
+
+    ui.addTextArea(-20, "<p align='center'><a href='event:closeProfile'><B><R>X</R></B></a</p>", self.name, 572, 110, 40, 40, 0xf, 0xf, 2, true)
+    ui.addTextArea(-21, string.format("<p align='center'><font size='22'><B>%s</B></font></a>", self.name), self.name, 310, 110, 230, 230, 0xf, 0xf, 2, true)
+
+end
+
+function Player:closeProfile()
+    
+    ui.removeTextArea(-20, self.name)
+    ui.removeTextArea(-21, self.name)
+
+    removeNineSlicedRect(self.menu.interface)
+end
+
 function Player:openMenu()
 
     self.isMenuOpen = true
@@ -433,6 +456,7 @@ function Player:openMenu()
     table.insert(self.menu.interface, nineSlicedRect(images.window, ":0", self.name, 700, 100, 80, 250))
 
     ui.addTextArea(-20, "<p align='center'>Menu</p>", self.name, 700, 110, 80, 50, 0xf, 0xf, 2, true)
+    ui.addTextArea(-21, string.format("<p align='center'><a href='event:profile%s'>Profile</a></p>", self.name), self.name, 700, 135, 80, 50, 0xf, 0xf, 2, true)
 end
 
 function Player:closeMenu()
@@ -442,6 +466,7 @@ function Player:closeMenu()
     removeNineSlicedRect(self.menu.interface)
 
     ui.removeTextArea(-20, self.name)
+    ui.removeTextArea(-21, self.name)
 end
 
 function Player:keyboard(key, down, x, y)
@@ -503,13 +528,20 @@ end
 
 function eventTextAreaCallback(id, name, event)
 
-    local isDialog = event:sub(1, 6) == "dialog"
+    if event:sub(1, 6) == "dialog" then
 
-    local cutsceneName = event:sub(7)
-
-    if isDialog then
+        local cutsceneName = event:sub(7)
 
         Cutscenes[cutsceneName]:nextDialog(name)
+    elseif event:sub(1, 7) == "profile" then
+
+        local playerName = event:sub(8)
+
+        data[name]:openProfile(playerName)
+
+    elseif event == "closeProfile" then
+
+        data[name]:closeProfile()
     end
 end
 
