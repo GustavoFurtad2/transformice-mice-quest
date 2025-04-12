@@ -1,5 +1,7 @@
 function build(files)
 
+    local initTime = os.clock()
+
     local sucess = pcall(function()
 
         local content = ""
@@ -16,6 +18,7 @@ function build(files)
         build:write(content)
     end)
 
+    print("Compiled in " .. os.clock() - initTime .. " ms")
     print(sucess and "Compiled with sucess!" or "Compilation failed!")
 end
 
