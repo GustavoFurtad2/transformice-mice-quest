@@ -7,10 +7,10 @@ function build(files)
         local content = ""
         local build = io.open("builds/build.lua", "w")
 
-        for k, v in next, files do
+        for _, name in next, files do
 
-            local file = io.open("src/" .. v)
-            content = content .. file:read("*a") .. "\n\n"
+            local file = io.open("src/" .. name)
+            content = content .. "-- [" .. name .. "] \n" .. file:read("*a") .. "\n\n"
             file:close()
 
         end

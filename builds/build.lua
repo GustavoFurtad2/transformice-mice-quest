@@ -1,3 +1,4 @@
+-- [init.lua] 
 for _, s in next, {"AutoNewGame", "AutoShaman", "AfkDeath", "MortCommand", "PhysicalConsumables"} do
     tfm.exec["disable" .. s]()
 end
@@ -8,6 +9,7 @@ ui.setMapName("#micequest")
 
 local data = {}
 
+-- [images.lua] 
 local images = {
 
     mouse = {
@@ -33,6 +35,7 @@ local images = {
     }
 }
 
+-- [texts.lua] 
 local texts = {
 
     ["br"] = {
@@ -46,6 +49,7 @@ local texts = {
     },
 }
 
+-- [utils.lua] 
 timers = {}
 
 local function doLater(action, time)
@@ -115,6 +119,7 @@ local function removeNineSlicedRect(source)
     end
 end
 
+-- [object.lua] 
 Object = {}
 Object.__index = Object
 
@@ -139,6 +144,7 @@ function Object:delete()
     tfm.exec.removeImage(self.image)
 end
 
+-- [entity.lua] 
 Entity = {}
 Entity.__index = Entity
 
@@ -183,6 +189,7 @@ function Entity:isColliding(object)
     return self.x + self.w >= object.x and self.x <= object.x + object.w and self.y + self.h >= object.y and self.y <= object.y + object.h
 end
 
+-- [cutscenes.lua] 
 local Cutscene = {}
 Cutscene.__index = Cutscene
 
@@ -237,6 +244,7 @@ end
 
 local Cutscenes = {}
 
+-- [cutscenes/prologue.lua] 
 Cutscenes.prologue = Cutscene.new("prologue")
 
 Cutscenes.prologue:addDialog("secret_room_message_1")
@@ -246,6 +254,7 @@ Cutscenes.prologue:addDialog("secret_room_message_4")
 Cutscenes.prologue:addDialog("secret_room_message_5")
 Cutscenes.prologue:addDialog("secret_room_message_6")
 
+-- [player.lua] 
 local Player = {}
 Player.__index = Player
 
@@ -512,6 +521,7 @@ function Player:keyboard(key, down, x, y)
     end
 end
 
+-- [events.lua] 
 function eventNewPlayer(name)
 
     data[name] = data[name] or Player:new(name)
